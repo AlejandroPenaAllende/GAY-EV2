@@ -5,7 +5,7 @@ exports.handler = async (event) => {
   return {
     statusCode: 302,
     headers: {
-      Location: `https://masagua.netlify.app/result.html?token_ws=${token}`
+      Location: `https://masagua.netlify.app/html/result.html?token_ws=${token}`
     }
   };
 };
