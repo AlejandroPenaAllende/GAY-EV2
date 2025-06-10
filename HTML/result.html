@@ -6,6 +6,41 @@
     <title>Hola</title>
 </head>
 <body>
-    AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const params = new URLSearchParams(window.location.search);
+            const token = params.get('token_ws');
+
+            if (!token) {
+            document.getElementById('mensaje').textContent = 'No se encontró el token de la transacción.';
+            return;
+            }
+
+            try {
+            const response = await fetch('/.netlify/functions/confirmar-transaccion', {
+                method: 'POST',
+                body: JSON.stringify({ token }),
+                headers: {
+                'Content-Type': 'application/json'
+                }
+            });
+
+            const data = await response.json();
+
+            if (data.status === 'AUTHORIZED') {
+                document.getElementById('mensaje').textContent = '✅ ¡Pago exitoso! Gracias por tu compra.';
+            } else {
+                document.getElementById('mensaje').textContent = `❌ La transacción fue rechazada o no autorizada. Estado: ${data.status}`;
+            }
+            } catch (error) {
+            console.error(error);
+            document.getElementById('mensaje').textContent = '❌ Ocurrió un error al verificar la transacción.';
+            }
+        });
+    </script>
+
+    <div id="mensaje">Procesando pago...</div>
+
+
 </body>
 </html>
