@@ -1,19 +1,22 @@
 const fetch = require('node-fetch');
 
 exports.handler = async (event) => {
+  console.log('Método:', event.httpMethod);
+  console.log('Body recibido:', event.body);
+
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
   const body = new URLSearchParams(event.body);
   const token = body.get('token_ws');
+  console.log('Token recibido:', token);
 
   if (!token) {
     return { statusCode: 400, body: 'Token no encontrado' };
   }
 
   try {
-    // Confirmar la transacción con Webpay
     const webpayResponse = await fetch(`https://webpay3gint.transbank.cl/rswebpaytransaction/api/webpay/v1.0/transactions/${token}`, {
       method: 'PUT',
       headers: {
@@ -24,24 +27,16 @@ exports.handler = async (event) => {
     });
 
     const webpayData = await webpayResponse.json();
+    console.log('Respuesta Webpay:', webpayData);
 
-    if (webpayData.status === 'AUTHORIZED') {
-      // Aquí se puede actualizar el stock en Supabase
+    const status = webpayData.status === 'AUTHORIZED' ? 'success' : 'failed';
 
-      return {
-        statusCode: 302,
-        headers: {
-          Location: `https://masagua.netlify.app/html/result.html?token_ws=${token}&status=success`
-        }
-      };
-    } else {
-      return {
-        statusCode: 302,
-        headers: {
-          Location: `https://masagua.netlify.app/html/result.html?token_ws=${token}&status=failed`
-        }
-      };
-    }
+    return {
+      statusCode: 302,
+      headers: {
+        Location: `https://masagua.netlify.app/html/result.html?token_ws=${token}&status=${status}`
+      }
+    };
   } catch (error) {
     console.error('Error en confirmación:', error);
     return {
