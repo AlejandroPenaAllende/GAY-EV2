@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 const { createClient } = require('@supabase/supabase-js');
 
+// Configura tu Supabase
 const supabase = createClient(
   'https://TU-PROYECTO.supabase.co',
   'TU_SUPABASE_ANON_KEY'
@@ -39,18 +40,21 @@ exports.handler = async (event) => {
     const status = data.status === 'AUTHORIZED' ? 'success' : 'failed';
 
     if (status === 'success') {
-      const session_id = data.session_id;
-      const productId = parseInt(session_id.replace('producto-', ''));
+      // Leer el session_id (ej: "productos-1,2,5")
+      const session_id = data.session_id || '';
+      const idPart = session_id.split('productos-')[1]; // "1,2,5"
+      const productIds = idPart ? idPart.split(',').map(id => parseInt(id)) : [];
 
-      // ✅ Llamar a la función RPC para reducir el stock
-      const { error } = await supabase.rpc('decrementar_stock', {
-        producto_id: productId
-      });
+      for (const id of productIds) {
+        const { error } = await supabase
+          .from('productos')
+          .update({ stock: supabase.raw('stock - 1') }) // o resta manual
+          .eq('id', id)
+          .gt('stock', 0); // Asegura que haya stock
 
-      if (error) {
-        console.error('Error al actualizar stock en Supabase:', error);
-      } else {
-        console.log('Stock actualizado correctamente');
+        if (error) {
+          console.error(`Error actualizando stock del producto ${id}:`, error);
+        }
       }
     }
 
