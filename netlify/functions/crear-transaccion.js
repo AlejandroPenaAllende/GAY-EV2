@@ -1,18 +1,27 @@
 // netlify/functions/crear-transaccion.js
+const fetch = require('node-fetch');
+
 exports.handler = async (event, context) => {
-  const { amount } = JSON.parse(event.body);
-
-  const url = 'https://webpay3gint.transbank.cl/rswebpaytransaction/api/webpay/v1.0/transactions';
-
-  const body = {
-    "buy_order": "ordenCompra12345678",
-    "session_id": "sesion1234557545",
-    "amount": parseInt(amount),
-    "return_url": 'https://masagua.netlify.app/.netlify/functions/retorno'
-  };
-
   try {
-    const response = await fetch(url, {
+    const { amount, productIds } = JSON.parse(event.body);
+
+    if (!amount || !productIds || !Array.isArray(productIds)) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({ message: 'Faltan datos: amount y productIds[] son requeridos.' })
+      };
+    }
+
+    const session_id = `productos-${productIds.join(',')}`; // Ej: productos-1,3,5
+
+    const body = {
+      buy_order: `orden-${Date.now()}`, // identificador único
+      session_id: session_id,
+      amount: amount,
+      return_url: 'https://masagua.netlify.app/.netlify/functions/retorno'
+    };
+
+    const response = await fetch('https://webpay3gint.transbank.cl/rswebpaytransaction/api/webpay/v1.0/transactions', {
       method: 'POST',
       headers: {
         'Tbk-Api-Key-Id': '597055555532',
@@ -38,6 +47,7 @@ exports.handler = async (event, context) => {
       statusCode: 200,
       body: JSON.stringify(data)
     };
+
   } catch (error) {
     console.error('Error general:', error);
     return {
