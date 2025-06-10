@@ -7,10 +7,9 @@ exports.handler = async (event, context) => {
   const body = {
     "buy_order": "ordenCompra12345678",
     "session_id": "sesion1234557545",
-    "amount": 10000,
+    "amount": parseInt(amount),
     "return_url": 'https://masagua.netlify.app/.netlify/functions/retorno'
   };
-
 
   try {
     const response = await fetch(url, {
