@@ -1,6 +1,20 @@
 exports.handler = async (event) => {
-  const params = event.queryStringParameters;
-  const token = params.token_ws;
+  if (event.httpMethod !== 'POST') {
+    return {
+      statusCode: 405,
+      body: 'Method Not Allowed'
+    };
+  }
+
+  const body = new URLSearchParams(event.body);
+  const token = body.get('token_ws');
+
+  if (!token) {
+    return {
+      statusCode: 400,
+      body: 'Token no encontrado'
+    };
+  }
 
   return {
     statusCode: 302,
