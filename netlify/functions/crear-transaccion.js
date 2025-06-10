@@ -5,10 +5,10 @@ exports.handler = async (event, context) => {
   const url = 'https://webpay3gint.transbank.cl/rswebpaytransaction/api/webpay/v1.0/transactions';
 
   const body = {
-    buy_order: 'order00001',
-    session_id: 'session00001',
-    amount: amount,
-    return_url: 'https://masagua.netlify.app/result.html'
+    "buy_order": "ordenCompra12345678",
+    "session_id": "sesion1234557545",
+    "amount": 10000,
+    "return_url": "http://www.comercio.cl/webpay/retorno"
   };
 
   try {
