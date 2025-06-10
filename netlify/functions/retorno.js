@@ -1,3 +1,5 @@
+console.log("⚠️ Llamada recibida en /retorno");
+
 const fetch = require('node-fetch');
 
 exports.handler = async (event) => {
