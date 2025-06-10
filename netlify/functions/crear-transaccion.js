@@ -11,6 +11,8 @@ exports.handler = async (event, context) => {
     "return_url": "https://webhook.site/0fd266dc-90de-44d7-ad07-ea1edc4a19fb"
   };
 
+  console.log(return_url)
+
   try {
     const response = await fetch(url, {
       method: 'POST',
