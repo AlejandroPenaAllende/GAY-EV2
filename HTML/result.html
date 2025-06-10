@@ -7,5 +7,12 @@
 </head>
 <body>
     AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+    <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token_ws');
+
+    console.log('Token recibido:', token);
+    </script>
 </body>
 </html>
