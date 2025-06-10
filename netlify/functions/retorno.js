@@ -36,22 +36,21 @@ exports.handler = async (event) => {
     });
 
     const data = await response.json();
-
     const status = data.status === 'AUTHORIZED' ? 'success' : 'failed';
 
     if (status === 'success') {
-      // Extraer ID del producto comprado (supongamos lo metiste en session_id)
-      const session_id = data.session_id; // ← Esto depende de cómo lo configuraste en crear-transacción
-      const productId = parseInt(session_id.replace('producto-', '')); // Ejemplo
+      const session_id = data.session_id;
+      const productId = parseInt(session_id.replace('producto-', ''));
 
-      // Reducir el stock del producto en Supabase
-      const { error } = await supabase
-        .from('productos')
-        .update({ stock: supabase.rpc('decrementar_stock', { producto_id: productId }) }) // o resta manual
-        .eq('id', productId);
+      // ✅ Llamar a la función RPC para reducir el stock
+      const { error } = await supabase.rpc('decrementar_stock', {
+        producto_id: productId
+      });
 
       if (error) {
         console.error('Error al actualizar stock en Supabase:', error);
+      } else {
+        console.log('Stock actualizado correctamente');
       }
     }
 
