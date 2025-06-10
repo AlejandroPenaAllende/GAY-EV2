@@ -130,7 +130,7 @@ body{
     background-color: rgb(34, 34, 252);
     color: white;
     box-shadow:  0px 5px 0px 3px rgb(0, 0, 114);
-    transform: translate(500%,65%);
+    transform: translate(500%,30%);
     transition: height 200ms ease-in, width 200ms ease-in, font-size  200ms ease-in ;
 }
 
