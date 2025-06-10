@@ -1,5 +1,4 @@
-exports.handler = async (event, context) => {
-
+exports.handler = async (event) => {
   const { token } = JSON.parse(event.body);
 
   const url = `https://webpay3gint.transbank.cl/rswebpaytransaction/api/webpay/v1.0/transactions/${token}`;
@@ -14,27 +13,18 @@ exports.handler = async (event, context) => {
       }
     });
 
-    if (!response.ok) {
-      const error = await response.text();
-      console.error('Error al confirmar transacción:', error);
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ message: 'Error al confirmar transacción', error })
-      };
-    }
-
     const data = await response.json();
     console.log('Respuesta confirmación:', data);
 
     return {
       statusCode: 200,
-      body: JSON.stringify(data)
+      body: JSON.stringify({ status: data.status, ...data })
     };
   } catch (error) {
-    console.error('Error general:', error);
+    console.error('Error al confirmar transacción:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ message: 'Error interno', error: error.toString() })
+      body: JSON.stringify({ message: 'Error al confirmar transacción', error: error.toString() })
     };
   }
 };
