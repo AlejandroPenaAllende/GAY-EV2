@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../IMG/MASAGUA_logo3.png">
+    <link rel="stylesheet" href="../CSS/gallery.css">
+    <title>Tienda</title>
+</head>
+<body>
+    <!--Navbar-->
+    <header class="Navbar">
+        <img src="../IMG/MASAGUA_logo2.png" alt="logo" class="navbar-logo">
+        <div class="navbar-btns">
+            <button class="nav-btn" id="to-gallery">Galeria</button>                             
+            <button class="nav-btn" id="log-out">Cerrar Sesión</button>
+        </div>
+    </header>
+
+    <div class="gallery-container">
+        <!--carrito de compras-->
+        <div id="carrito" style="padding:20px; background:#eee;">
+            <h2>Carrito de Compras</h2>
+            <h1></h1>
+            <table id="tabla-carrito">
+                <thead>
+                    <tr>
+                        <th class="prod-nombre">Nombre</th>
+                        <th>Código</th>
+                        <th>Marca</th>
+                        <th>Valor</th>
+                        <th>Cantidad</th>
+                        <th>Subtotal</th>
+                        <th style="width: 120px;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody style="margin-bottom: 30px">
+                <!-- Aquí se insertarán los productos dinámicamente -->
+                </tbody>
+            </table>
+            <p id="total-carrito"></p>
+        </div>
+
+        <div>
+            <input id="totalInput" type="hidden">
+            <button onclick="doTransaction()" id="paybtn" class="paybtn" 
+            style="
+                text-align: center; 
+                width:10%; 
+                margin-left:45%; 
+                margin-top: 30px;
+                border: none; 
+                font-size: 16px; 
+                font-weight: bold; 
+                border-radius: 16px;
+                background-color: rgb(21, 0, 128); 
+                color: white; 
+                height: 30px;
+                box-shadow: 0px 5px 0px 0px rgb(9, 0, 56);">
+                Pagar</button>
+        </div>
+
+        <!--Galeria de productos-->
+        <div class="gallery" id="gallery">
+
+        </div>
+
+        <p style="padding-top: 30px;"></p>
+
+    </div>
+
+    
+    <!--Webpay API rest-->
+    <script>
+        async function doTransaction() {
+            const total = document.getElementById('totalInput').value;
+
+            const respuesta = await fetch('/.netlify/functions/crear-transaccion', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ amount: total })
+            });
+
+            if (!respuesta.ok) {
+            console.error('Error al crear la transacción:', await respuesta.text());
+            alert('Error al procesar el pago');
+            return;
+            }
+
+            const data = await respuesta.json();
+            console.log('Respuesta de Webpay:', data);
+
+            // Redirigir a Webpay
+            window.location.href = data.url + '?token_ws=' + data.token;
+        }
+    </script>
+    <!--Supabase API rest-->
+    <script type="module">
+        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+        //Inicializar conexión
+        const supabaseUrl = 'https://hmqxyjsnspztoymjyvll.supabase.co' ;
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtcXh5anNuc3B6dG95bWp5dmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4NTEzNDUsImV4cCI6MjA2NDQyNzM0NX0.-MYJIgF52rq-_0iPORkulKdnCRc8diw1q9aM6X-8eiQ';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        const gallery = document.getElementById('gallery');
+
+        async function loadProduct(){
+            const{data: product, error} = await supabase
+            .from('product2')
+            .select('*');
+
+            if(!product.length){
+                gallery.innerHTML = '<p>No hay productos diponibles</p>';
+                return;
+            }
+
+            //Crear galeria
+            product.forEach(producto => {
+                const div = document.createElement('div');
+                div.classList.add('product-box');
+
+                div.innerHTML = `
+                <img src="data:image/jpeg;base64,${producto.prod_img}" alt="${producto.prod_name}">
+                <div class="producto-info">
+                    <h2>${producto.prod_name}</h2>
+                    <div class="detalle">
+                    <p><strong>Código:</strong> ${producto.code}</p>
+                    <p><strong>Marca:</strong> ${producto.prod_brand}</p>
+                    <p class="precio">$${Number(producto.prod_price).toLocaleString('es-CL')}</p>
+                    </div>
+                </div>
+                <button class="btn-agregar"
+                    data-nombre="${producto.prod_name}"
+                    data-codigo="${producto.code}"
+                    data-marca="${producto.prod_brand}"
+                    data-valor="${producto.prod_price}">+</button>`;
+                
+                gallery.appendChild(div);
+            });
+        }
+
+        loadProduct();
+    </script>
+    <!--Carrito de compras-->
+    <script src="../JS/carrito.js"></script>
+    <!--Datos del user-->
+    <script>
+        document.getElementById('to-gallery').focus();
+
+        const user_name = sessionStorage.getItem('user_name');
+        const user_email = sessionStorage.getItem('user_email');
+        const user_type = sessionStorage.getItem('user_type');
+        const user_id = sessionStorage.getItem('user_id');
+
+        //document.getElementById('nombre').textContent = user_name;
+        //document.getElementById('e-mail').textContent = user_email;
+        //document.getElementById('tipo').textContent = user_type;
+        //document.getElementById('id').textContent = user_id;
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../IMG/MASAGUA_logo3.png">
+    <link rel="stylesheet" href="../CSS/forms.css">
+    <title>Iniciar sesión</title>
+</head>
+<body>
+    <div class="form-container">
+        <form class="form" id="login-form">
+
+            <img src="../IMG/MASAGUA_logo3.png" alt="logo" class="form-logo2">
+            <img src="../IMG/MASAGUA_logo2.png" alt="logo" class="form-logo">
+            <div class="line"></div>
+            <h1>Ingresa a nuestro portal virtual</h1>
+
+            <div class="form-box">
+                <input type="text" id="log-email" class="form-input" placeholder=" " name="user_email">
+                <label for="log-email" class="form-label">Correo</label>
+            </div>
+
+            <div class="form-box">
+                <input type="password" id="log-pass" class="form-input" placeholder=" " name="user_pass">
+                <label for="log-pass" class="form-label">Contraseña</label>
+            </div>
+
+            <P class="link">¿Aún no tienes una cuenta Ferremas?  <a href="register.html">Registrate</a></P>
+            
+            <button class="form-btn" type="submit">Ingresar</button>
+
+        </form>
+    </div>
+
+    <!--Supabase API-->
+    <script type="module">
+        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+        //Inicializar conexión
+        const supabaseUrl = 'https://hmqxyjsnspztoymjyvll.supabase.co' ;
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtcXh5anNuc3B6dG95bWp5dmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4NTEzNDUsImV4cCI6MjA2NDQyNzM0NX0.-MYJIgF52rq-_0iPORkulKdnCRc8diw1q9aM6X-8eiQ';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        //Tomar datos del form
+        const form = document.getElementById('login-form');
+        form.addEventListener('submit', async (ev)=>{
+            ev.preventDefault();
+
+            const email = document.getElementById('log-email').value;
+            const pass = document.getElementById('log-pass').value;
+                
+                    
+            //Consultar tabla user
+            const {data, error} = await supabase
+            .from('user')
+            .select('id, user_name, user_email, user_type')
+            .eq('user_email', email)
+            .eq('user_password', pass)
+            .single();
+
+            if(error || !data){
+                alert('Las credenciales ingresadas no son validas');
+                window.location.href = '../index.html';
+                return;
+            }
+
+            //sessionStorage
+            sessionStorage.setItem('user_name', data.user_name);
+            sessionStorage.setItem('user_email', data.user_email);
+            sessionStorage.setItem('user_type', data.user_type);
+            sessionStorage.setItem('user_id', data.id);
+
+            window.location.href = 'gallery.html';
+        })
+    </script>
+</body>
+</html>

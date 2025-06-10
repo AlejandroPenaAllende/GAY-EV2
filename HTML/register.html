@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../IMG/MASAGUA_logo3.png">
+    <link rel="stylesheet" href="../CSS/forms.css">
+    <title>Registrate</title>
+</head>
+<body>
+    <div class="form-container">
+        <form class="form" id="register-form">
+
+            <img src="../IMG/MASAGUA_logo3.png" alt="logo" class="form-logo2">
+            <img src="../IMG/MASAGUA_logo2.png" alt="logo" class="form-logo">
+            <div class="line"></div>
+            <h1>Registra tu cuenta personal</h1>
+
+            <div class="form-box">
+                <input type="text" id="reg-name" class="form-input" placeholder=" " name="user_name">
+                <label for="reg-name" class="form-label">Nombre</label>
+            </div>
+
+            <div class="form-box">
+                <input type="text" id="reg-email" class="form-input" placeholder=" " name="user_email">
+                <label for="reg-email" class="form-label">Correo</label>
+            </div>
+
+            <div class="form-box">
+                <input type="password" id="reg-pass" class="form-input" placeholder=" " name="user_pass">
+                <label for="reg-pass" class="form-label">Contraseña</label>
+            </div>
+
+            <div class="form-box">
+                <input type="password" id="reg-confirm" class="form-input" placeholder=" ">
+                <label for="reg-confirm" class="form-label">Confirmar contraseña</label>
+            </div>
+
+            <P class="link">¿Ya te encuentras registrado?  <a href="login.html">Ingresa</a></P>
+            
+            <button class="form-btn" type="submit">Registrate</button>
+
+        </form>
+    </div>
+
+    <!--Supabase API-->
+    <script type="module">
+        import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+        //Inicializar conexión
+        const supabaseUrl = 'https://hmqxyjsnspztoymjyvll.supabase.co' ;
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhtcXh5anNuc3B6dG95bWp5dmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg4NTEzNDUsImV4cCI6MjA2NDQyNzM0NX0.-MYJIgF52rq-_0iPORkulKdnCRc8diw1q9aM6X-8eiQ';
+        const supabase = createClient(supabaseUrl, supabaseKey);
+
+        //Tomar datos del form
+        const form = document.getElementById('register-form');
+        form.addEventListener('submit', async(ev)=>{
+            ev.preventDefault();
+
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const pass = document.getElementById('reg-pass').value.trim();
+            const conf = document.getElementById('reg-confirm').value.trim();
+
+            const validarEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const ValidarPass = /^(?=(?:[^a-zA-Z]*[a-zA-Z]){4})(?=(?:\D*\d){4})(?=.*[^a-zA-Z0-9]).{9,}$/;
+
+            //Evitar que los campos esten vacios
+            if(email === "" || pass === "" || name === "" || conf === ""){
+                alert("Es obligatorio completar todos los campos")
+                return;
+            }
+
+            //Evitar nombres muy largos o muy cortos
+            if(name.length < 3){
+                alert("El nombre ingresado es demasiado corto, minimo 3 caracteres");
+                return;
+            }
+
+            if(name.length > 50){
+                alert("El nombre ingresado es demasiado largo, maximo 50 caracteres");
+                return;
+            }
+
+            //Evitar que se ingrese un correo erroneo
+            if (!validarEmail.test(email)) {
+                alert("El correo ingresado no es valido");
+                return;
+            }
+
+            //Contraseña
+            if(!ValidarPass.test(pass)){
+                alert("La contraseña no es valdida, 4 caracteres - 4 digitos - 1 simbolo minimo");
+                return;
+            }
+
+            if(pass.length > 16){
+                alert("La contraseña ingresada es demasiado larga, maximo 16 caracteres");
+                return;
+            }
+
+            //Confirmar contraseña
+            if(conf !== pass){
+                alert("Las contraseñas no coinciden");
+                return;
+            }
+
+            //Verificar si el correo esta registrado
+            const {data: isRegistered, error: errorA} = await supabase
+            .from('user')
+            .select('id')
+            .eq('user_email', email)
+            .maybeSingle();
+
+            if(isRegistered){
+                alert('El correo ingresado ya se encuentra registrado');
+                window.location.href = 'register.html';
+                return;
+            }
+
+            //Insertar nuevo usuario
+            const{data: newUser, error:errorB} = await supabase
+            .from('user')
+            .insert([{
+                user_name: name,
+                user_email: email,
+                user_password: pass,
+                user_type: 'Customer'
+            }])
+            .select()
+            .single();
+
+            //sessionStorage
+            sessionStorage.setItem('user_name', newUser.user_name);
+            sessionStorage.setItem('user_email', newUser.user_email);
+            sessionStorage.setItem('user_type', newUser.user_type);
+            sessionStorage.setItem('user_id', newUser.id);
+
+            const msg = `¡Hola ${name}, tu cuenta fue creada con exito!`;
+            alert(msg);
+            window.location.href = 'gallery.html';
+        });
+
+    </script>
+    
+</body>
+</html>

@@ -1,0 +1,220 @@
+@import url('https://fonts.googleapis.com/css2?family=Convergence&family=Gantari:ital,wght@0,100..900;1,100..900&family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&family=Outfit:wght@100..900&display=swap');
+
+/*================*/
+    /*--Navbar--*/
+/*================*/
+.Navbar{
+    height: 65px;
+    background: white;
+    box-shadow: 0px 0px 10px 3px;
+    z-index: 25;
+    position: relative;
+}
+
+.navbar-logo{
+    height: 45px;
+    margin-top: 10px;
+    margin-left: 20px;
+}
+
+.navbar-btns{
+    width: fit-content;
+    float: right;
+    transform: translateY(25%);
+}
+
+.nav-btn{
+    width: 150px;
+    border: none;
+    font-size: 16px;
+    font-weight: bold;
+    height: 35px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    background-color: rgb(34, 34, 252);
+    color: white;
+    margin-right: 15px;
+    transition: background-color 200ms ease-in, color 200ms ease-in, border  200ms ease-in ;
+}
+.nav-btn:focus{
+    background-color: white;
+    border: 3px solid rgb(34, 34, 252);
+    color: rgb(34, 34, 252);
+    font-weight: bolder;
+}
+
+/*================*/
+    /*--Base--*/
+/*================*/
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+body{
+    background: #090979;
+    background: linear-gradient(90deg, rgba(9, 9, 121, 1) 0%, rgba(0, 212, 255, 1) 100%);
+    height: 100vh;
+    width: 100%;
+    font-family: "Gantari";
+    overflow: auto;
+}
+
+.gallery-container{
+    margin-bottom: 30px;
+}
+
+/*================*/
+  /*--Galeria--*/
+/*================*/
+.gallery{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    padding: 0px;
+    margin-left: 2.5%;
+    width: 95%;
+    margin-top: 30px;
+}
+
+.product-box{
+    background-color: rgb(255, 255, 255);
+    border-top-right-radius: 8px;
+    border-top-left-radius: 28px;
+    border-bottom-right-radius: 28px;
+    border-bottom-left-radius: 8px; 
+    overflow: hidden;
+    box-shadow: 0px 7px 0px 0px rgb(112, 112, 112); 
+    height: 400px;
+    width: 300px;
+}
+
+.product-box img { 
+    width: 100%; 
+    height: 225px; 
+    background: #ffffff;
+    background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(217, 217, 217, 1) 69%, rgba(150, 150, 150, 1) 100%);
+    border-top-right-radius: 8px;
+}
+
+.producto-info { 
+    padding: 15px; 
+}
+
+.detalle{
+    position: absolute;
+    transform: translateY(50%);
+}
+.producto-info h2 { 
+    font-size: 18px;
+     margin: 0 0 10px 0;
+ }
+.producto-info p { 
+    margin: 5px 0; 
+    font-size: 14px; 
+    color: #201f1f; 
+}
+.producto-info .precio { 
+    color: #000; 
+    font-weight: bold; 
+    font-size: 16px; 
+}
+
+.btn-agregar{
+    width: 45px;
+    height: 45px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 10px;
+    border: none;
+    background-color: rgb(34, 34, 252);
+    color: white;
+    box-shadow:  0px 5px 0px 3px rgb(0, 0, 114);
+    transform: translate(500%,65%);
+    transition: height 200ms ease-in, width 200ms ease-in, font-size  200ms ease-in ;
+}
+
+/*================*/
+  /*--Carrito--*/
+/*================*/
+
+#carrito{
+    margin: 0px;
+    padding: 0px;
+    height: fit-content;
+    width: 65%;
+    margin-left: 17.5%;
+    border-radius: 12px;
+    padding-left: 50px;
+    padding-right: 50px;
+    margin-top: 40px;
+    box-shadow: 0px 5px 0px 2px rgb(112, 112, 112);
+    text-align: center;
+}
+
+#tabla-carrito{
+    width: 98%;
+    margin-left: 1%;
+}
+
+.prod-nombre{
+    margin-top: 20px;
+    text-align: start;
+}
+
+#total-carrito{
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+#total-carrito.no-total #total-carrito{
+    margin-top: 0px;
+}
+
+
+.btn-eliminar{
+    width: 60%;
+    border: none;
+    font-size: 12px;
+    font-weight: bold;
+    height: 20px;
+    border-radius: 12px;
+    background-color: rgb(252, 31, 31);
+    color: white;
+    margin-bottom: 5px;
+}
+
+.btn-menos{
+    width: 20px;
+    border: none;
+    font-size: 12px;
+    font-weight: none;
+    height: 20px;
+    border-radius: 5px;
+    background-color: rgb(253, 202, 19);
+}
+.total{
+    font-weight: bold;
+}
+
+#carrito h2{
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#carrito h1{
+    border-bottom: 2px solid rgb(107, 100, 100);
+    width: 70%;
+    margin-left: 15%;
+    margin-bottom: 20px;
+}
+
+#carrito ul{
+    margin: 0px;
+    margin-left: 10px;
+}
+
+.empty{
+    padding-top: 35px;
+    padding-bottom: 0px;
+}
