@@ -6,42 +6,37 @@
     <title>Hola</title>
 </head>
 <body>
+    <h1 id="mensaje">Procesando pago...</h1>
 
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
 
-        const supabase = createClient(
-            'https://hmqxyjsnspztoymjyvll.supabase.co',
-            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...' // tu key pública
-        );
+        const supabase = createClient('https://hmqxyjsnspztoymjyvll.supabase.co', 'your_public_key');
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const status = urlParams.get('status');
+        const params = new URLSearchParams(window.location.search);
+        const status = params.get('status');
+        const token = params.get('token_ws');
+
+        const mensaje = document.getElementById('mensaje');
 
         if (status === 'success') {
-            const carrito = JSON.parse(sessionStorage.getItem('carritoParaDescontar')) || [];
+        mensaje.textContent = '✅ ¡Pago exitoso!';
 
-            for (const item of carrito) {
-            const { data, error } = await supabase
-                .from('product2')
-                .update({ stock: supabase.rpc('decrement_stock', { id_param: item.codigo, cantidad_param: item.cantidad }) }) 
-                .eq('code', item.codigo);
+        const carrito = JSON.parse(sessionStorage.getItem('carritoParaDescontar')) || [];
 
-            if (error) {
-                console.error(`Error al actualizar el stock de ${item.nombre}:`, error);
-            }
-            }
-
-            document.getElementById('mensaje').textContent = '✅ ¡Pago exitoso! Gracias por tu compra.';
-            sessionStorage.removeItem('carritoParaDescontar');
-            localStorage.removeItem('carrito');
-        } else if (status === 'failed') {
-            document.getElementById('mensaje').textContent = '❌ La transacción fue rechazada.';
+        for (const item of carrito) {
+            await supabase
+            .from('product2')
+            .update({ stock: supabase.raw(`stock - ${item.cantidad}`) })
+            .eq('code', item.codigo);
         }
-    </script>   
 
-    <div id="mensaje">Procesando pago...</div>
-
-
+        sessionStorage.removeItem('carritoParaDescontar');
+        localStorage.removeItem('carrito');
+        } else {
+        mensaje.textContent = '❌ Pago fallido.';
+        }
+    </script>
 </body>
+
 </html>
