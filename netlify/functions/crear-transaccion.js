@@ -8,7 +8,7 @@ exports.handler = async (event, context) => {
     "buy_order": "ordenCompra12345678",
     "session_id": "sesion1234557545",
     "amount": 10000,
-    "return_url": "http://www.comercio.cl/webpay/retorno"
+    "return_url": "https://webhook.site/0fd266dc-90de-44d7-ad07-ea1edc4a19fb"
   };
 
   try {
